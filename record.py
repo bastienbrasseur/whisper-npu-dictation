@@ -14,8 +14,7 @@ TARGET_SR   = 16000
 
 def _find_input_device():
     """
-    Locate the microphone, preferring WASAPI then MME then any other hostapi.
-    Boosts score by 100 if "fifine" appears in the device name.
+    Pick the best available input device: WASAPI > MME > any other hostapi.
     Returns (device_index, channels, default_samplerate).
     """
     devices  = sd.query_devices()
@@ -27,14 +26,11 @@ def _find_input_device():
         except Exception:
             return ""
 
-    # score: +100 if "fifine" in name, +10 WASAPI, +5 MME
     best_score, best_idx = -1, None
     for i, d in enumerate(devices):
         if d["max_input_channels"] < 1:
             continue
         score = 0
-        if "fifine" in d["name"].lower():
-            score += 100
         api = api_name(d["hostapi"])
         if "wasapi" in api:
             score += 10
