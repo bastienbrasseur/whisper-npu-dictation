@@ -136,8 +136,8 @@ $lnk.Save()
 |--------|-------|
 | Commencer à dicter | Maintenir **Ctrl gauche + Maj gauche** |
 | Envoyer et coller | Relâcher l'une ou l'autre touche |
-| Activer / Désactiver | Clic droit icône AHK → Activer / Désactiver |
-| Quitter | Clic droit icône AHK → Quitter |
+| Activer / Désactiver | Clic droit icône → Enable / Disable |
+| Quitter | Clic droit icône → Quit |
 
 Bip haut (880 Hz) = enregistrement démarré  
 Bip bas (440 Hz) = enregistrement arrêté, envoi au NPU

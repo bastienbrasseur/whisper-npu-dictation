@@ -63,8 +63,8 @@ dictee.ahk (AutoHotkey v2)
 ## Quick install
 
 ```powershell
-git clone https://github.com/bastienbrasseur/whisper-npu-dictation C:\scripts\dictee
-cd C:\scripts\dictee
+git clone https://github.com/bastienbrasseur/whisper-npu-dictation
+cd whisper-npu-dictation
 .\install.ps1
 ```
 
@@ -106,8 +106,8 @@ $lem = "$env:LOCALAPPDATA\lemonade_server\bin\lemonade.exe"
 **3 — Clone this repo and install Python deps**
 
 ```powershell
-git clone https://github.com/bastienbrasseur/whisper-npu-dictation C:\scripts\dictee
-cd C:\scripts\dictee
+git clone https://github.com/bastienbrasseur/whisper-npu-dictation
+cd whisper-npu-dictation
 pip install sounddevice soundfile numpy
 ```
 
@@ -116,7 +116,7 @@ pip install sounddevice soundfile numpy
 ```powershell
 winget install AutoHotkey.AutoHotkey
 # Then double-click dictee.ahk, or:
-Start-Process "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe" '"C:\scripts\dictee\dictee.ahk"'
+Start-Process "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe" '"<path-to>\dictee.ahk"'
 ```
 
 **5 — (Optional) Auto-start on boot**
@@ -126,7 +126,7 @@ $startup = [Environment]::GetFolderPath('Startup')
 $ws  = New-Object -ComObject WScript.Shell
 $lnk = $ws.CreateShortcut("$startup\dictee_vocale.lnk")
 $lnk.TargetPath  = "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe"
-$lnk.Arguments   = '"C:\scripts\dictee\dictee.ahk"'
+$lnk.Arguments   = '"<path-to>\dictee.ahk"'
 $lnk.Save()
 ```
 
@@ -138,8 +138,8 @@ $lnk.Save()
 |--------|---------|
 | Start dictating | Hold **Left Ctrl + Left Shift** |
 | Send & paste | Release either key |
-| Enable / disable | Right-click the AHK tray icon → Activer / Désactiver |
-| Quit | Right-click tray icon → Quitter |
+| Enable / disable | Right-click the tray icon → Enable / Disable |
+| Quit | Right-click the tray icon → Quit |
 
 High beep (880 Hz) = recording started  
 Low beep (440 Hz) = recording stopped, sending to NPU

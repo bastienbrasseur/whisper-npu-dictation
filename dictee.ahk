@@ -13,19 +13,19 @@ isRecording := false
 recPID      := 0
 
 ; ── Tray icon ────────────────────────────────────────────────────────────────
-A_IconTip := "Dictee NPU  |  Ctrl+Maj pour dicter"
+A_IconTip := "NPU Dictation  |  Ctrl+Shift to dictate"
 A_TrayMenu.Delete()
-A_TrayMenu.Add("Dictee vocale NPU", (*) => 0)
-A_TrayMenu.Disable("Dictee vocale NPU")
+A_TrayMenu.Add("NPU Dictation", (*) => 0)
+A_TrayMenu.Disable("NPU Dictation")
 A_TrayMenu.Add()
-A_TrayMenu.Add("Activer / Desactiver", (*) => ToggleSuspend())
-A_TrayMenu.Add("Quitter", (*) => ExitApp())
+A_TrayMenu.Add("Enable / Disable", (*) => ToggleSuspend())
+A_TrayMenu.Add("Quit", (*) => ExitApp())
 
 ToggleSuspend() {
     Suspend(-1)
     A_IconTip := A_IsSuspended
-        ? "Dictee NPU  |  SUSPENDU"
-        : "Dictee NPU  |  Ctrl+Maj pour dicter"
+        ? "NPU Dictation  |  DISABLED"
+        : "NPU Dictation  |  Ctrl+Shift to dictate"
 }
 
 ; ── Core functions ───────────────────────────────────────────────────────────
