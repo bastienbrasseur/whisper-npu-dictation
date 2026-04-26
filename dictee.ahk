@@ -30,10 +30,11 @@ ToggleSuspend() {
 
 ; ── Core functions ───────────────────────────────────────────────────────────
 StartRec() {
-    global isRecording, recPID, PYTHON, RECPY, FLAG
+    global isRecording, recPID, PYTHON, RECPY, FLAG, WAV
     if isRecording
         return
     isRecording := true
+    try FileDelete(WAV)                         ; remove stale WAV from previous session
     SoundBeep(880, 80)                          ; high beep = recording started
     recPID := Run('"' PYTHON '" "' RECPY '"',, "Hide")
     loop 100 {                                  ; wait for record.py to be ready (max 2 s)

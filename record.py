@@ -51,13 +51,16 @@ def _find_input_device():
 device_idx, CHANNELS, NATIVE_SR = _find_input_device()
 CHUNK_FRAMES = int(0.1 * NATIVE_SR)
 
-# Create the flag file — signals AHK that the script is ready
-open(FLAG_FILE, "w").close()
-
 frames = []
 try:
     with sd.InputStream(samplerate=NATIVE_SR, channels=CHANNELS,
                         dtype="float32", device=device_idx) as stream:
+        # Flush audio buffered by the driver before the stream opened
+        pre = stream.read_available
+        if pre > 0:
+            stream.read(pre)
+        # Signal AHK only once the stream is actually capturing
+        open(FLAG_FILE, "w").close()
         while os.path.exists(FLAG_FILE):
             chunk, _ = stream.read(CHUNK_FRAMES)
             frames.append(chunk.copy())
