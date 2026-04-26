@@ -1,5 +1,7 @@
 # whisper-npu-dictation
 
+> 🇫🇷 [Lire en français](README.fr.md)
+
 Global push-to-talk dictation on Windows, running Whisper **entirely on the AMD Ryzen AI NPU** (XDNA 2). Your GPU stays free for whatever you were already running.
 
 > Built with [Lemonade Server](https://lemonade-server.ai) · powered by [Whisper](https://github.com/openai/whisper) via [whisper.cpp](https://github.com/ggerganov/whisper.cpp)
@@ -181,12 +183,12 @@ $lem = "$env:LOCALAPPDATA\lemonade_server\bin\lemonade.exe"
 
 ### Change the microphone
 
-Edit `record.py`:
+`record.py` auto-detects your microphone by name (prefers WASAPI > MME > WDM-KS). No manual configuration needed when you plug in a different mic.
+
+To list available devices:
 
 ```python
-# List available devices:
-# python -c "import sounddevice as sd; print(sd.query_devices())"
-DEVICE_IDX = 7   # change to your device index
+python -c "import sounddevice as sd; print(sd.query_devices())"
 ```
 
 ---

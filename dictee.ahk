@@ -1,7 +1,7 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; ── Configuration ────────────────────────────────────────────────────────────
+; ── Settings ─────────────────────────────────────────────────────────────────
 PYTHON := "pythonw"
 RECPY  := A_ScriptDir . "\record.py"
 FLAG   := A_Temp . "\dictee_flag.lock"
@@ -12,7 +12,7 @@ URL    := "http://localhost:13305/v1/audio/transcriptions"
 isRecording := false
 recPID      := 0
 
-; ── Icone barre des taches ────────────────────────────────────────────────────
+; ── Tray icon ────────────────────────────────────────────────────────────────
 A_IconTip := "Dictee NPU  |  Ctrl+Maj pour dicter"
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Dictee vocale NPU", (*) => 0)
@@ -28,15 +28,15 @@ ToggleSuspend() {
         : "Dictee NPU  |  Ctrl+Maj pour dicter"
 }
 
-; ── Fonctions internes ────────────────────────────────────────────────────────
+; ── Core functions ───────────────────────────────────────────────────────────
 StartRec() {
     global isRecording, recPID, PYTHON, RECPY, FLAG
     if isRecording
         return
     isRecording := true
-    SoundBeep(880, 80)                          ; bip haut = debut enregistrement
+    SoundBeep(880, 80)                          ; high beep = recording started
     recPID := Run('"' PYTHON '" "' RECPY '"',, "Hide")
-    loop 100 {                                  ; attendre que record.py soit pret (max 2s)
+    loop 100 {                                  ; wait for record.py to be ready (max 2 s)
         if FileExist(FLAG)
             break
         Sleep(20)
@@ -48,12 +48,12 @@ StopRec() {
     if !isRecording
         return
     isRecording := false
-    try FileDelete(FLAG)                        ; signal d'arret pour record.py
-    ProcessWaitClose(recPID, 4)                 ; attendre la fin de l'enregistrement
-    SoundBeep(440, 80)                          ; bip bas = fin enregistrement
+    try FileDelete(FLAG)                        ; stop signal for record.py
+    ProcessWaitClose(recPID, 4)                 ; wait for recording to finish
+    SoundBeep(440, 80)                          ; low beep = recording stopped
     if !FileExist(WAV)
         return
-    ; ── Envoi au NPU via Lemonade ─────────────────────────────────────────────
+    ; ── Send to NPU via Lemonade ─────────────────────────────────────────────
     tmp := A_Temp . "\dictee_out.txt"
     RunWait('"' CURL '" -s -X POST "' URL '"'
         . ' -F "file=@' WAV '"'
@@ -64,7 +64,7 @@ StopRec() {
         return
     raw := FileRead(tmp, "UTF-8")
     FileDelete(tmp)
-    ; ── Extraction du texte JSON et collage ───────────────────────────────────
+    ; ── Extract text from JSON and paste ─────────────────────────────────────
     if RegExMatch(raw, '"text"\s*:\s*"((?:[^"\\]|\\.)*)"', &m) {
         text := StrReplace(m[1], "\n", "")
         text := Trim(text)
@@ -73,15 +73,15 @@ StopRec() {
     }
 }
 
-; ── Raccourci push-to-talk : Ctrl gauche + Maj gauche ────────────────────────
-; Cas 1 : Ctrl appuye en premier, puis Maj
+; ── Push-to-talk hotkey: Left Ctrl + Left Shift ──────────────────────────────
+; Case 1: Ctrl pressed first, then Shift
 LCtrl & LShift:: {
     StartRec()
     KeyWait("LShift")
     StopRec()
 }
 
-; Cas 2 : Maj appuyee en premier, puis Ctrl
+; Case 2: Shift pressed first, then Ctrl
 LShift & LCtrl:: {
     StartRec()
     KeyWait("LCtrl")

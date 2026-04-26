@@ -1,6 +1,6 @@
 """
-record.py — Enregistrement micro pour dictee vocale
-Demarre via AutoHotkey, s'arrete quand le flag est supprime.
+record.py — Microphone capture for voice dictation.
+Started by AutoHotkey on keydown, stops when the flag file is deleted.
 """
 import sounddevice as sd
 import soundfile as sf
@@ -14,8 +14,9 @@ TARGET_SR   = 16000
 
 def _find_input_device():
     """
-    Trouve le micro fifine en privilegiant WASAPI, puis MME, puis tout autre
-    hostapi. Retourne (device_index, channels, default_samplerate).
+    Locate the microphone, preferring WASAPI then MME then any other hostapi.
+    Boosts score by 100 if "fifine" appears in the device name.
+    Returns (device_index, channels, default_samplerate).
     """
     devices  = sd.query_devices()
     hostapis = sd.query_hostapis()
@@ -26,7 +27,7 @@ def _find_input_device():
         except Exception:
             return ""
 
-    # score: 100 si "fifine" dans le nom, +10 WASAPI, +5 MME
+    # score: +100 if "fifine" in name, +10 WASAPI, +5 MME
     best_score, best_idx = -1, None
     for i, d in enumerate(devices):
         if d["max_input_channels"] < 1:
@@ -43,7 +44,7 @@ def _find_input_device():
             best_score, best_idx = score, i
 
     if best_idx is None:
-        raise RuntimeError("Aucun peripherique d'entree trouve.")
+        raise RuntimeError("No input device found.")
 
     dev      = devices[best_idx]
     channels = min(dev["max_input_channels"], 2)
@@ -54,7 +55,7 @@ def _find_input_device():
 device_idx, CHANNELS, NATIVE_SR = _find_input_device()
 CHUNK_FRAMES = int(0.1 * NATIVE_SR)
 
-# Creer le flag : signale a AHK que le script est pret
+# Create the flag file — signals AHK that the script is ready
 open(FLAG_FILE, "w").close()
 
 frames = []
@@ -71,7 +72,7 @@ finally:
 if not frames:
     raise SystemExit(0)
 
-# Stereo -> mono si necessaire, puis resampling vers 16000 Hz
+# Mix stereo to mono if needed, then resample to 16 000 Hz
 audio = np.concatenate(frames)
 if audio.ndim > 1:
     audio = np.mean(audio, axis=1)
